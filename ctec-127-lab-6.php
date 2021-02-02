@@ -14,7 +14,36 @@
     <?php
     // function to calculate converted temperature
     function convertTemp($temp, $unit1, $unit2)
-    {
+    {   if (($unit1 != $unit2) && ($temp != "") && ($unit1 != "--Select--") and ($unit2 != "--Select--" )) {
+        // conversion from Celsius
+            if ($unit1 == "celsius") {
+                if ($unit2 == "fahrenheit") {
+                    return (($temp * (9/5)) + 32);
+                }  else{
+                    return ($temp + 273.15);
+                }
+                
+            // conversion from Fahrenheit
+                } elseif ($unit1 == "fahrenheit") {
+                    if ($unit2 == "celsius") {
+                        return (($temp - 32) * 5/9);
+                    }  else { // conv. to kelvin
+                        return (($temp + 459.67) * 5/9);
+                    }   
+            // conversion from Kelvin
+                } else {
+                    if ($unit2 == "celsius") {
+                        return ($temp - 273.15);
+                    }  else { //conv. to fahrenheit
+                        return ($temp * 9/5 - 459.67);
+                    } 
+                }}  
+                else {
+                return null;
+                }
+            }
+
+
         // conversion formulas
         // Celsius to Fahrenheit = T(°C) × 9/5 + 32
         // Celsius to Kelvin = T(°C) + 273.15
@@ -25,21 +54,25 @@
 
         // You need to develop the logic to convert the temperature based on the selections and input made
 
-    } // end function
+     // end function
 
-    // Logic to check for POST and grab data from $_POST
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // Store the original temp and units in variables
-        // You can then use these variables to help you make the form sticky
-        // then call the convertTemp() function
-        // Once you have the converted temperature you can place PHP within the converttemp field using PHP
-        // I coded the sticky code for the originaltemp field for you
-
-        $originalTemperature = $_POST['originaltemp'];
-        $originalUnit = $_POST['originalunit'];
-        $conversionUnit = $_POST['conversionunit'];
+        // Initialize variables or set to form submissions of $_POST
+        if (isset($_POST['originaltemp'])) {
+            $originalTemperature = $_POST['originaltemp'];
+        } else {
+            $originalTemperature = "";
+        }
+        if (isset($_POST['originalunit'])) {
+            $originalUnit = $_POST['originalunit'];
+        } else {
+            $originalUnit = "";
+        }
+        if (isset($_POST['conversionunit'])){
+            $conversionUnit = $_POST['conversionunit'];
+        } else {
+            $conversionUnit = "";
+        }
         $convertedTemp = convertTemp($originalTemperature, $originalUnit, $conversionUnit);
-    } // end if
 
     ?>
     <!-- Form starts here -->
@@ -55,21 +88,24 @@
 
             <select name="originalunit">
                 <option value="--Select--">--Select--</option>
-                <option value="celsius">Celsius</option>
-                <option value="fahrenheit">Fahrenheit</option>
-                <option value="kelvin">Kelvin</option>
+                <option value="celsius" <?php if($originalUnit=="celsius") echo ' selected="selected"';?>>Celsius</option>
+                <option value="fahrenheit" <?php if($originalUnit=="fahrenheit") echo ' selected="selected"';?>>Fahrenheit</option>
+                <option value="kelvin" <?php if($originalUnit=="kelvin") echo ' selected="selected"';?>>Kelvin</option>
             </select>
         </div>
 
         <div class="group">
             <label for="convertedtemp">Converted Temperature</label>
-            <input type="text" value="" name="convertedtemp" size="14" maxlength="7" id="convertedtemp" readonly>
+            <input type="text" value="<?php if (isset($convertedTemp)) {
+                                            echo $convertedTemp;
+                                        }
+                                        ?>" name="convertedtemp" size="14" maxlength="7" id="convertedtemp" readonly>
 
             <select name="conversionunit">
                 <option value="--Select--">--Select--</option>
-                <option value="celsius">Celsius</option>
-                <option value="fahrenheit">Fahrenheit</option>
-                <option value="kelvin">Kelvin</option>
+                <option value="celsius" <?php if($conversionUnit=="celsius") echo ' selected="selected"';?>>Celsius</option>
+                <option value="fahrenheit" <?php if($conversionUnit=="fahrenheit") echo ' selected="selected"';?>>Fahrenheit</option>
+                <option value="kelvin" <?php if($conversionUnit=="kelvin") echo ' selected="selected"';?>>Kelvin</option>
             </select>
         </div>
         <input type="submit" value="Convert" />
